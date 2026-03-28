@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Rewriter</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #232734;
+      --border: #2e3345;
+      --text: #e1e4ed;
+      --text-muted: #8b90a0;
+      --accent: #6c8cff;
+      --accent-hover: #8aa4ff;
+      --danger: #ff6b6b;
+      --success: #51cf66;
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    header h1 span { color: var(--accent); }
+
+    .settings-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .settings-btn:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* ── Controls row ─────────────────────────────────────────────── */
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .control-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .control-group label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      min-width: 240px;
+    }
+
+    select:focus { outline: none; border-color: var(--accent); }
+
+    /* ── Two-column layout ────────────────────────────────────────── */
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 800px) { .columns { grid-template-columns: 1fr; } }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+
+    textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 260px;
+      flex: 1;
+    }
+
+    textarea:focus { outline: none; border-color: var(--accent); }
+    textarea::placeholder { color: var(--text-muted); }
+
+    /* ── File upload ──────────────────────────────────────────────── */
+
+    .file-upload {
+      margin-bottom: 0.75rem;
+    }
+
+    .file-upload label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface2);
+      border: 1px dashed var(--border);
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .file-upload label:hover { border-color: var(--accent); color: var(--text); }
+    .file-upload input { display: none; }
+    .file-name { font-size: 0.8rem; color: var(--accent); margin-left: 0.5rem; }
+
+    .or-divider {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Buttons ──────────────────────────────────────────────────── */
+
+    .actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: var(--accent); }
+
+    /* ── Result ───────────────────────────────────────────────────── */
+
+    .result-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 1.5rem;
+      display: none;
+    }
+
+    .result-panel.visible { display: block; }
+
+    .result-content {
+      padding: 1.25rem;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    /* ── Status / errors ──────────────────────────────────────────── */
+
+    .status {
+      text-align: center;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .status.visible { display: block; }
+    .status.error { color: var(--danger); }
+    .status.loading { color: var(--accent); }
+    .status.success { color: var(--success); }
+
+    /* ── Spinner ──────────────────────────────────────────────────── */
+
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal ────────────────────────────────────────────────────── */
+
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 440px;
+      max-width: 90vw;
+    }
+
+    .modal h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+    .modal .field { margin-bottom: 1rem; }
+    .modal .field label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+
+    .modal input[type="password"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.55rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+    }
+
+    .modal input:focus { outline: none; border-color: var(--accent); }
+
+    .key-status {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .key-status.configured { color: var(--success); }
+    .key-status.missing { color: var(--text-muted); }
+
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><span>CV</span> Rewriter</h1>
+  <button class="settings-btn" onclick="openSettings()">&#9881; API Keys</button>
+</header>
+
+<main>
+  <!-- Controls -->
+  <div class="controls">
+    <div class="control-group">
+      <label>Provider</label>
+      <select id="provider" onchange="updateModels()">
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="openai">OpenAI (GPT)</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Model</label>
+      <select id="model"></select>
+    </div>
+  </div>
+
+  <!-- Input columns -->
+  <div class="columns">
+    <div class="panel">
+      <div class="panel-header">Your CV</div>
+      <div class="panel-body">
+        <div class="file-upload">
+          <label>
+            &#128206; Upload file (PDF, DOCX, TXT)
+            <input type="file" id="cvFile" accept=".pdf,.docx,.doc,.txt" onchange="showFileName(this)" />
+          </label>
+          <span class="file-name" id="fileName"></span>
+        </div>
+        <div class="or-divider">— or paste below —</div>
+        <textarea id="cvText" placeholder="Paste your CV text here..."></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Job Advertisement</div>
+      <div class="panel-body">
+        <textarea id="jobAd" placeholder="Paste the job ad here..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn-primary" id="rewriteBtn" onclick="doRewrite()">Rewrite CV</button>
+  </div>
+
+  <!-- Status -->
+  <div class="status" id="status"></div>
+
+  <!-- Result -->
+  <div class="result-panel" id="resultPanel">
+    <div class="panel-header">
+      Rewritten CV
+      <button class="btn-secondary" onclick="copyResult()">&#128203; Copy</button>
+    </div>
+    <div class="result-content" id="resultContent"></div>
+  </div>
+</main>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>&#128272; API Key Settings</h2>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">
+      Keys are saved to a local <code>.env</code> file. They never leave your machine (except to call the API).
+    </p>
+    <div class="field">
+      <label>Anthropic API Key</label>
+      <input type="password" id="anthropicKey" placeholder="sk-ant-..." />
+      <div class="key-status" id="anthropicStatus"></div>
+    </div>
+    <div class="field">
+      <label>OpenAI API Key</label>
+      <input type="password" id="openaiKey" placeholder="sk-..." />
+      <div class="key-status" id="openaiStatus"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+      <button class="btn-primary" onclick="saveKeys()">Save Keys</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let models = {};
+
+  // ── Init ───────────────────────────────────────────────────────────────
+  async function init() {
+    const res = await fetch('/api/models');
+    models = await res.json();
+    updateModels();
+  }
+
+  function updateModels() {
+    const provider = document.getElementById('provider').value;
+    const sel = document.getElementById('model');
+    sel.innerHTML = '';
+    (models[provider] || []).forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.id;
+      opt.textContent = m.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  function showFileName(input) {
+    const name = input.files[0]?.name || '';
+    document.getElementById('fileName').textContent = name;
+    if (name) {
+      document.getElementById('cvText').placeholder = `Using uploaded file: ${name}`;
+    }
+  }
+
+  // ── Rewrite ────────────────────────────────────────────────────────────
+  async function doRewrite() {
+    const btn = document.getElementById('rewriteBtn');
+    const status = document.getElementById('status');
+    const resultPanel = document.getElementById('resultPanel');
+
+    const jobAd = document.getElementById('jobAd').value.trim();
+    if (!jobAd) { showStatus('Please paste the job advertisement.', 'error'); return; }
+
+    const cvFile = document.getElementById('cvFile').files[0];
+    const cvText = document.getElementById('cvText').value.trim();
+    if (!cvFile && !cvText) { showStatus('Please upload your CV or paste the text.', 'error'); return; }
+
+    btn.disabled = true;
+    resultPanel.classList.remove('visible');
+    showStatus('<span class="spinner"></span> Rewriting your CV… this may take 30-60 seconds.', 'loading');
+
+    const form = new FormData();
+    form.append('provider', document.getElementById('provider').value);
+    form.append('model', document.getElementById('model').value);
+    form.append('job_ad', jobAd);
+    if (cvFile) form.append('cv_file', cvFile);
+    else form.append('cv_text', cvText);
+
+    try {
+      const res = await fetch('/api/rewrite', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showStatus(data.error || 'Something went wrong.', 'error');
+        return;
+      }
+
+      document.getElementById('resultContent').textContent = data.rewritten_cv;
+      resultPanel.classList.add('visible');
+      showStatus('Done!', 'success');
+    } catch (e) {
+      showStatus(`Network error: ${e.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function showStatus(msg, type) {
+    const el = document.getElementById('status');
+    el.innerHTML = msg;
+    el.className = `status visible ${type}`;
+  }
+
+  async function copyResult() {
+    const text = document.getElementById('resultContent').textContent;
+    await navigator.clipboard.writeText(text);
+    const btn = event.target;
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003; Copied!';
+    setTimeout(() => btn.innerHTML = orig, 1500);
+  }
+
+  // ── Settings modal ─────────────────────────────────────────────────────
+  async function openSettings() {
+    document.getElementById('settingsModal').classList.add('visible');
+    document.getElementById('anthropicKey').value = '';
+    document.getElementById('openaiKey').value = '';
+
+    const res = await fetch('/api/keys/status');
+    const data = await res.json();
+
+    setKeyStatus('anthropicStatus', data.anthropic);
+    setKeyStatus('openaiStatus', data.openai);
+  }
+
+  function setKeyStatus(id, configured) {
+    const el = document.getElementById(id);
+    if (configured) {
+      el.textContent = '✓ Key configured';
+      el.className = 'key-status configured';
+    } else {
+      el.textContent = 'Not configured';
+      el.className = 'key-status missing';
+    }
+  }
+
+  function closeSettings() {
+    document.getElementById('settingsModal').classList.remove('visible');
+  }
+
+  async function saveKeys() {
+    const anthropicKey = document.getElementById('anthropicKey').value.trim();
+    const openaiKey = document.getElementById('openaiKey').value.trim();
+
+    const saves = [];
+    if (anthropicKey) {
+      const form = new FormData();
+      form.append('provider', 'anthropic');
+      form.append('api_key', anthropicKey);
+      saves.push(fetch('/api/keys/save', { method: 'POST', body: form }));
+    }
+    if (openaiKey) {
+      const form = new FormData();
+      form.append('provider', 'openai');
+      form.append('api_key', openaiKey);
+      saves.push(fetch('/api/keys/save', { method: 'POST', body: form }));
+    }
+
+    if (saves.length === 0) { closeSettings(); return; }
+
+    await Promise.all(saves);
+    closeSettings();
+    showStatus('API keys saved.', 'success');
+  }
+
+  init();
+</script>
+
+</body>
+</html>
