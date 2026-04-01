@@ -120,3 +120,6 @@ The tool rephrases your experience to match the job ad's language and keywords. 
 **API error** — Double-check your API key in Settings. Make sure you have credit on your account.
 
 **Port already in use** — Something else is using port 8000. Close it or edit the port number at the bottom of `app.py`.
+
+## License
+This software is currently not licensed for commercial use. If you’d like to use this in a business setting or install it professionally, please contact me at cw4444@gmail.com
