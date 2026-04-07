@@ -110,7 +110,7 @@ The tool rephrases your experience to match the job ad's language and keywords. 
 | OpenAI | GPT-4 Turbo | Alternative |
 
 ---
-
+Use MCP connectors to hook this up to job sites and writing tools
 ## Troubleshooting
 
 **"python is not recognized"** — You probably didn't tick "Add to PATH" when installing Python. Reinstall it and make sure that box is ticked.
